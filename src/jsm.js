@@ -4,8 +4,8 @@ var mixin = require('./util/mixin'),
   UNOBSERVED = [null, []
   ];
 
-//------------------------------------------------------------------------------
-//-------------------
+// -----------------------------------------------------------------------------
+// - -------------------
 
 function JSM(context, config) {
   this.context = context;
@@ -14,8 +14,8 @@ function JSM(context, config) {
   this.observers = [context];
 }
 
-//------------------------------------------------------------------------------
-//-------------------
+// -----------------------------------------------------------------------------
+// - -------------------
 
 mixin(JSM.prototype, {
 
@@ -77,9 +77,17 @@ mixin(JSM.prototype, {
       return to
   },
 
-  fire: async function (transition, args) {
-    var to = await Promise.resolve(this.seek(transition, args))
-    return this.transit(transition, this.state, to, args);
+  fire: function (transition, args) {
+    const to = this.seek(transition, args)
+    if (to && typeof to.then === 'function') {
+      return Promise
+        .resolve(to)
+        .then(to => {
+          return this.transit(transition, this.state, to, args);
+        });
+    } else {
+      return this.transit(transition, this.state, to, args);
+    }
   },
 
   transit: function (transition, from, to, args) {
@@ -220,10 +228,10 @@ mixin(JSM.prototype, {
 
 });
 
-//------------------------------------------------------------------------------
-//-------------------
+// -----------------------------------------------------------------------------
+// - -------------------
 
 module.exports = JSM;
 
-//------------------------------------------------------------------------------
-//-------------------
+// -----------------------------------------------------------------------------
+// - -------------------
