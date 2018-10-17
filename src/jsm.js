@@ -78,11 +78,11 @@ mixin(JSM.prototype, {
   },
 
   fire: function (transition, args) {
-    const to = this.seek(transition, args)
+    var to = this.seek(transition, args)
     if (to && typeof to.then === 'function') {
       return Promise
         .resolve(to)
-        .then(to => {
+        .then(function (to) {
           return this.transit(transition, this.state, to, args);
         });
     } else {
