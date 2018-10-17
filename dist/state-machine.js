@@ -436,11 +436,12 @@ mixin(JSM.prototype, {
 
   fire: function (transition, args) {
     var to = this.seek(transition, args)
+    var jsm = this;
     if (to && typeof to.then === 'function') {
       return Promise
         .resolve(to)
         .then(function (to) {
-          return this.transit(transition, this.state, to, args);
+          return jsm.transit(transition, this.state, to, args);
         });
     } else {
       return this.transit(transition, this.state, to, args);
